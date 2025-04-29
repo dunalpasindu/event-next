@@ -1,10 +1,12 @@
 import React from 'react';
+import EventMerchandisePage from '../components/merchandiselist';
 
 function Merchandise() {
   return (
     <div>
-      <h1 className="text-2xl font-bold">Event Merchandise Purchase Form</h1>
-      <p>Form content goes here...</p>
+      <h1 className="my-4 text-3xl font-bold text-center">Merchandise</h1>
+      <EventMerchandisePage />
+
     </div>
   );
 }

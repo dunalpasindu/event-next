@@ -21,7 +21,7 @@ function Home() {
 
   return (
     <div className="text-center">
-      <div className="relative w-full h-[60vh] overflow-hidden">
+      <div className="relative w-full h-[50vh] overflow-hidden">
         {/* Text in the middle of the image */}
         <h1 className="absolute inset-0 flex items-center justify-center text-4xl font-bold text-white bg-black bg-opacity-50 z-10">
           Manage Your Event with EventNext!

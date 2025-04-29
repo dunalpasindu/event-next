@@ -27,7 +27,7 @@ function Sidebar() {
             to="/sponsor"
             className="block bg-gray-800 hover:bg-blue-600 transition-colors p-3 rounded-lg text-center"
           >
-            Sponsors
+            Sponsor Interest
           </Link>
         </li>
         <li>

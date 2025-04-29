@@ -45,14 +45,18 @@ function Home() {
       </div>
 
       {/* About Us Section */}
-      <div className="mt-8 mx-auto w-3/4 bg-white p-6 rounded-lg shadow-lg">
+      <div className="mt-8 mx-auto w-4/5 bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-gray-700 mb-4">About Us</h2>
-        <p className="text-gray-700 text-lg">
-          Welcome to EventNext, your one-stop solution for managing events seamlessly. 
-          Whether you're planning a corporate event, a wedding, or a community gathering, 
-          our platform provides all the tools you need to make your event a success. 
-          From event registration to sponsor management, merchandise sales, and accommodation requests, 
-          we've got you covered. Let us help you create unforgettable experiences!
+        <p className="text-gray-700 text-sm">
+        Welcome to EventNext – your all-in-one platform for seamless event management. Whether you're organizing a corporate conference, a dream wedding, a fundraiser, or a vibrant community gathering, we’re here to simplify every step of the process.
+
+At EventNext, we believe that creating memorable events shouldn't be complicated. That's why we've built a powerful yet easy-to-use platform that empowers event organizers of all sizes to plan, manage, and execute successful events from start to finish.
+
+Our comprehensive suite of tools includes event registration, sponsor interest management, merchandise sales, and accommodation requests – all integrated into one centralized system. With EventNext, you can effortlessly track RSVPs, communicate with attendees, manage vendor relationships, and handle logistics, all in one place.
+
+We’re passionate about helping our users focus on what really matters: creating meaningful, unforgettable experiences for their guests. Backed by modern technology and a dedicated support team, EventNext is more than just software – it’s your partner in planning.
+
+Join thousands of successful event planners who trust EventNext to bring their visions to life. Let us help you turn your next event into something extraordinary.
         </p>
       </div>
     </div>

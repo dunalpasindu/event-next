@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
+import Home from './pages/Home';
 import EventRegister from './pages/EventRegister';
 import Sponsor from './pages/Sponsor';
 import Merchandise from './pages/Merchandise';
@@ -12,9 +12,9 @@ function App() {
     <div className="flex h-screen">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Navbar />
-        <div className="p-6">
+        <div className="">
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/event-register" element={<EventRegister />} />
             <Route path="/sponsor" element={<Sponsor />} />
             <Route path="/merchandise" element={<Merchandise />} />

@@ -6,6 +6,14 @@ function Sidebar() {
     <div className="bg-gray-900 text-white w-64 p-6 shadow-lg">
       <h2 className="text-2xl font-bold mb-8 text-center">EventNext</h2>
       <ul className="space-y-6">
+      <li>
+          <Link
+            to="/"
+            className="block bg-gray-800 hover:bg-blue-600 transition-colors p-3 rounded-lg text-center"
+          >
+            Home
+          </Link>
+        </li>
         <li>
           <Link
             to="/event-register"

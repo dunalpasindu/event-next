@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import { FaEdit, FaTrash } from 'react-icons/fa'; // Import icons for Update and Delete
 
 function MySponsorList() {
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch sponsor data from the backend
     const fetchSponsors = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/sponsors'); // Backend API endpoint
+        const response = await fetch('http://localhost:3000/api/sponsors');
         const data = await response.json();
-        setSponsors(data); // Set the fetched data to state
+        setSponsors(data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching sponsor data:', error);
@@ -23,7 +23,6 @@ function MySponsorList() {
     fetchSponsors();
   }, []);
 
-  // Handle delete sponsor
   const handleDelete = async (id) => {
     try {
       const response = await fetch(`http://localhost:3000/api/sponsors/${id}`, {
@@ -31,7 +30,7 @@ function MySponsorList() {
       });
 
       if (response.ok) {
-        setSponsors(sponsors.filter((sponsor) => sponsor._id !== id)); // Remove the deleted sponsor from the state
+        setSponsors(sponsors.filter((sponsor) => sponsor._id !== id));
       } else {
         console.error('Failed to delete sponsor');
       }
@@ -40,9 +39,8 @@ function MySponsorList() {
     }
   };
 
-  // Handle update sponsor (navigate to update form or handle inline)
   const handleUpdate = (id) => {
-    navigate(`/sponsor-update/${id}`); // Navigate to the SponsorUpdate page with the sponsor ID
+    navigate(`/sponsor-update/${id}`);
   };
 
   if (loading) {
@@ -51,49 +49,56 @@ function MySponsorList() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold text-blue-600 mb-4">My Sponsor List</h1>
+      <h1 className="text-3xl font-bold text-blue-600 mb-6">My Sponsor List</h1>
       {sponsors.length === 0 ? (
-        <p>No sponsors found.</p>
+        <p className="text-gray-600">No sponsors found.</p>
       ) : (
-        <table className="w-full border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 p-2">Organization Name</th>
-              <th className="border border-gray-300 p-2">Email</th>
-              <th className="border border-gray-300 p-2">Phone Number</th>
-              <th className="border border-gray-300 p-2">Budget Range</th>
-              <th className="border border-gray-300 p-2">Event</th>
-              <th className="border border-gray-300 p-2">Message</th>
-              <th className="border border-gray-300 p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sponsors.map((sponsor) => (
-              <tr key={sponsor._id}>
-                <td className="border border-gray-300 p-2">{sponsor.organizationName}</td>
-                <td className="border border-gray-300 p-2">{sponsor.email}</td>
-                <td className="border border-gray-300 p-2">{sponsor.phoneNumber}</td>
-                <td className="border border-gray-300 p-2">{sponsor.budgetRange}</td>
-                <td className="border border-gray-300 p-2">{sponsor.event}</td>
-                <td className="border border-gray-300 p-2">{sponsor.message}</td>
-                <td className="border border-gray-300 p-2">
-                  <button
-                    onClick={() => handleUpdate(sponsor._id)}
-                    className="bg-yellow-500 text-white font-semibold py-1 px-3 rounded-lg hover:bg-yellow-600 transition mr-2"
-                  >
-                    Update
-                  </button>
-                  <button
-                    onClick={() => handleDelete(sponsor._id)}
-                    className="bg-red-500 text-white font-semibold py-1 px-3 rounded-lg hover:bg-red-600 transition"
-                  >
-                    Delete
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse border border-gray-200">
+            <thead>
+              <tr className="bg-blue-100 text-blue-800">
+                <th className="border border-gray-200 p-3">Organization Name</th>
+                <th className="border border-gray-200 p-3">Email</th>
+                <th className="border border-gray-200 p-3">Phone Number</th>
+                <th className="border border-gray-200 p-3">Budget Range</th>
+                <th className="border border-gray-200 p-3">Event</th>
+                <th className="border border-gray-200 p-3">Message</th>
+                <th className="border border-gray-200 p-3 text-center">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {sponsors.map((sponsor, index) => (
+                <tr
+                  key={sponsor._id}
+                  className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}
+                >
+                  <td className="border border-gray-200 p-3">{sponsor.organizationName}</td>
+                  <td className="border border-gray-200 p-3">{sponsor.email}</td>
+                  <td className="border border-gray-200 p-3">{sponsor.phoneNumber}</td>
+                  <td className="border border-gray-200 p-3">{sponsor.budgetRange}</td>
+                  <td className="border border-gray-200 p-3">{sponsor.event}</td>
+                  <td className="border border-gray-200 p-3">{sponsor.message}</td>
+                  <td className="border border-gray-200 p-3 text-center">
+                    <button
+                      onClick={() => handleUpdate(sponsor._id)}
+                      className="text-blue-600 hover:text-blue-800 transition mx-2"
+                      title="Update"
+                    >
+                      <FaEdit size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(sponsor._id)}
+                      className="text-red-600 hover:text-red-800 transition mx-2"
+                      title="Delete"
+                    >
+                      <FaTrash size={18} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { events } from "../data/events";
+import { useNavigate } from "react-router-dom";
 
 function EventMerchandisePage() {
   const [selectedEventId, setSelectedEventId] = useState(events[0].id);
   const [quantities, setQuantities] = useState({});
   const [cart, setCart] = useState({});
   const [showCart, setShowCart] = useState(false);
+  const navigate = useNavigate();
 
   function getSelectedEvent() {
     return events.find((event) => event.id === selectedEventId);
@@ -191,7 +193,15 @@ function EventMerchandisePage() {
                     Clear Cart
                   </button>
                   <button
-                    onClick={() => alert('Checkout not implemented')}
+                    onClick={() =>
+                      navigate("/purchase", {
+                        state: {
+                          eventName: getSelectedEvent().name,
+                          cart,
+                          total: Object.values(cart).reduce((sum, item) => sum + item.total, 0).toFixed(2),
+                        },
+                      })
+                    }
                     className="flex-1 px-3 py-2 text-sm font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
                   >
                     Checkout

@@ -7,6 +7,8 @@ import Sponsor from './pages/Sponsor';
 import Merchandise from './pages/Merchandise';
 import Accommodation from './pages/Accommodation';
 import PurchaseForm from './pages/PurchaseForm';
+import MySponsorList from './pages/MySponsorList';
+import SponsorUpdate from './pages/SponsorUpdate';
 
 function App() {
   return (
@@ -21,6 +23,9 @@ function App() {
             <Route path="/merchandise" element={<Merchandise />} />
             <Route path="/accommodation" element={<Accommodation />} />
             <Route path="/purchase" element={<PurchaseForm />} /> {/* Add this line */}
+
+            <Route path="/my-sponsor-list" element={<MySponsorList />} />
+            <Route path="/sponsor-update/:id" element={<SponsorUpdate />} />
           </Routes>
         </div>
       </div>

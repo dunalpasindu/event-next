@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 function Sponsor() {
   const [formData, setFormData] = useState({
     organizationName: '',
-    contactPerson: '',
     email: '',
     phoneNumber: '',
     budgetRange: '',
@@ -26,7 +25,6 @@ function Sponsor() {
   const validate = () => {
     const newErrors = {};
     if (!formData.organizationName) newErrors.organizationName = 'Organization Name is required.';
-    if (!formData.contactPerson) newErrors.contactPerson = 'Contact Person is required.';
     if (!formData.email) {
       newErrors.email = 'Email is required.';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -43,17 +41,40 @@ function Sponsor() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
+        setErrors(validationErrors);
     } else {
-      console.log('Form submitted:', formData);
-      setErrors({});
-      // Add form submission logic here
+        try {
+            const response = await fetch('http://localhost:5173/api/sponsors', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                console.log('Form submitted successfully');
+                setFormData({
+                    organizationName: '',
+                    email: '',
+                    phoneNumber: '',
+                    budgetRange: '',
+                    event: '',
+                    message: '',
+                });
+                setErrors({});
+            } else {
+                console.error('Failed to submit form');
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+        }
     }
-  };
+};
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
@@ -74,23 +95,6 @@ function Sponsor() {
             placeholder="Enter your organization name"
           />
           {errors.organizationName && <p className="text-red-500 text-sm">{errors.organizationName}</p>}
-        </div>
-
-        {/* Contact Person */}
-        <div>
-          <label htmlFor="contactPerson" className="block text-gray-700 font-medium">
-            Contact Person
-          </label>
-          <input
-            type="text"
-            id="contactPerson"
-            name="contactPerson"
-            value={formData.contactPerson}
-            onChange={handleChange}
-            className="w-full mt-1 p-2 border border-gray-300 rounded-lg"
-            placeholder="Enter the contact person's name"
-          />
-          {errors.contactPerson && <p className="text-red-500 text-sm">{errors.contactPerson}</p>}
         </div>
 
         {/* Email */}

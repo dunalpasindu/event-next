@@ -1,0 +1,33 @@
+require('dotenv').config(); // Load environment variables
+const express = require('express');
+const mongoose = require('mongoose'); // Import mongoose
+const cors = require('cors'); // Import CORS middleware
+const sponsorRoute = require('./routes/sponsorRoute'); // Import the sponsor route
+
+const app = express();
+const PORT = 3000;
+
+// Middleware to parse JSON
+app.use(express.json());
+app.use(cors()); // Enable CORS for cross-origin requests
+
+// MongoDB connection string from .env
+const MONGO_URI = process.env.MONGO_URI;
+
+// Connect to MongoDB
+mongoose.connect(MONGO_URI)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Failed to connect to MongoDB', err));
+
+// Use the sponsor route
+app.use('/api/sponsors', sponsorRoute);
+
+// Basic route
+app.get('/', (req, res) => {
+    res.send('Hello, World!');
+});
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});

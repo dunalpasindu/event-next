@@ -48,7 +48,7 @@ function Sponsor() {
         setErrors(validationErrors);
     } else {
         try {
-            const response = await fetch('http://localhost:5173/api/sponsors', {
+            const response = await fetch('http://localhost:3000/api/sponsors', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

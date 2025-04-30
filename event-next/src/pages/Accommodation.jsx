@@ -68,11 +68,38 @@ function Accommodation() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
-      setSubmitted(true);
+      try {
+        const response = await fetch('http://localhost:3000/api/accommodations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        if (response.ok) {
+          console.log('Form submitted successfully');
+          setSubmitted(true);
+          setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            checkIn: '',
+            checkOut: '',
+            message: '',
+            accommodationPlace: '',
+          });
+          setErrors({});
+        } else {
+          console.error('Failed to submit form');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+      }
     } else {
       setErrors(validationErrors);
     }

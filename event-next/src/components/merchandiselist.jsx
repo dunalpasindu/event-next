@@ -51,19 +51,41 @@ function EventMerchandisePage() {
     setErrors(validationErrors);
     setSubmitted(true);
     if (Object.keys(validationErrors).length === 0) {
-      // Submit logic here
-      alert("Order submitted!");
-      setCustomer({
-        name: "",
-        email: "",
-        phone: "",
-        houseNo: "",
-        addressLine: "",
-        addressLine2: "",
-        paymentMethod: "cash",
-      });
-      setSubmitted(false);
-      setErrors({});
+      // Prepare order data
+      const eventObj = getPurchaseEvent();
+      const itemObj = eventObj?.merchandise.find((item) => item.id === purchaseItemId);
+      const orderData = {
+        eventId: eventObj.id,
+        eventName: eventObj.name,
+        itemId: itemObj.id,
+        itemName: itemObj.name,
+        quantity,
+        totalPrice,
+        customer,
+        paymentMethod: customer.paymentMethod,
+      };
+      // Send to backend
+      fetch('http://localhost:3000/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData),
+      })
+        .then((res) => res.json())
+        .then(() => {
+          alert('Order submitted!');
+          setCustomer({
+            name: "",
+            email: "",
+            phone: "",
+            houseNo: "",
+            addressLine: "",
+            addressLine2: "",
+            paymentMethod: "cash",
+          });
+          setSubmitted(false);
+          setErrors({});
+        })
+        .catch(() => alert('Failed to submit order!'));
     }
   }
 

@@ -1,7 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { events } from "../data/events";
+import { FaClipboardList } from "react-icons/fa";
+import { useNavigate, useLocation } from "react-router-dom";
 
 function EventMerchandisePage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Read editOrder from navigation state
+  const editOrder = location.state?.editOrder;
+
   const [selectedEventId, setSelectedEventId] = useState(events[0].id);
   const [purchaseEventId, setPurchaseEventId] = useState(events[0].id);
   const [purchaseItemId, setPurchaseItemId] = useState(events[0].merchandise[0]?.id || "");
@@ -20,6 +28,21 @@ function EventMerchandisePage() {
   const [totalPrice, setTotalPrice] = useState(
     getPurchaseEvent()?.merchandise.find((item) => item.id === purchaseItemId)?.price || 0
   );
+
+  // Prefill form if editing
+  useEffect(() => {
+    if (editOrder) {
+      setSelectedEventId(editOrder.eventId);
+      setPurchaseEventId(editOrder.eventId);
+      setPurchaseItemId(editOrder.itemId);
+      setQuantity(editOrder.quantity);
+      setCustomer({
+        ...editOrder.customer,
+        paymentMethod: editOrder.paymentMethod || "cash",
+      });
+    }
+    // eslint-disable-next-line
+  }, [editOrder]);
 
   function getSelectedEvent() {
     return events.find((event) => event.id === selectedEventId);
@@ -51,32 +74,85 @@ function EventMerchandisePage() {
     setErrors(validationErrors);
     setSubmitted(true);
     if (Object.keys(validationErrors).length === 0) {
-      // Submit logic here
-      alert("Order submitted!");
-      setCustomer({
-        name: "",
-        email: "",
-        phone: "",
-        houseNo: "",
-        addressLine: "",
-        addressLine2: "",
-        paymentMethod: "cash",
-      });
-      setSubmitted(false);
-      setErrors({});
+      // Prepare order data
+      const eventObj = getPurchaseEvent();
+      const itemObj = eventObj?.merchandise.find((item) => item.id === purchaseItemId);
+      const orderData = {
+        eventId: eventObj.id,
+        eventName: eventObj.name,
+        itemId: itemObj.id,
+        itemName: itemObj.name,
+        quantity,
+        totalPrice,
+        customer,
+        paymentMethod: customer.paymentMethod,
+      };
+
+      // If editing, update existing order
+      if (editOrder && editOrder._id) {
+        fetch(`http://localhost:3000/api/orders/${editOrder._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData),
+        })
+          .then((res) => res.json())
+          .then(() => {
+            alert('Order updated!');
+            setCustomer({
+              name: "",
+              email: "",
+              phone: "",
+              houseNo: "",
+              addressLine: "",
+              addressLine2: "",
+              paymentMethod: "cash",
+            });
+            setSubmitted(false);
+            setErrors({});
+            navigate("/my-orders");
+          })
+          .catch(() => alert('Failed to update order!'));
+      } else {
+        // Otherwise, create new order
+        fetch('http://localhost:3000/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData),
+        })
+          .then((res) => res.json())
+          .then(() => {
+            alert('Order submitted!');
+            setCustomer({
+              name: "",
+              email: "",
+              phone: "",
+              houseNo: "",
+              addressLine: "",
+              addressLine2: "",
+              paymentMethod: "cash",
+            });
+            setSubmitted(false);
+            setErrors({});
+          })
+          .catch(() => alert('Failed to submit order!'));
+      }
     }
   }
 
   const isFormValid = Object.keys(validate(customer)).length === 0;
 
   // Update item dropdown when event changes
-  React.useEffect(() => {
-    const event = getPurchaseEvent();
-    if (event && event.merchandise.length > 0) {
-      setPurchaseItemId(event.merchandise[0].id);
-    } else {
-      setPurchaseItemId("");
+  useEffect(() => {
+    // Only auto-select if not editing
+    if (!editOrder) {
+      const event = getPurchaseEvent();
+      if (event && event.merchandise.length > 0) {
+        setPurchaseItemId(event.merchandise[0].id);
+      } else {
+        setPurchaseItemId("");
+      }
     }
+    // eslint-disable-next-line
   }, [purchaseEventId]);
 
   React.useEffect(() => {
@@ -86,11 +162,20 @@ function EventMerchandisePage() {
 
   return (
     <div className="relative min-h-screen bg-gray-50">
+      {/* Top right View Orders icon */}
+      <button
+        className="absolute top-0 z-20 flex items-center px-2 py-2 text-white transition bg-blue-500 rounded-lg shadow right-8 hover:bg-blue-600"
+        onClick={() => navigate("/my-orders")}
+        title="View My Orders"
+      >
+        <FaClipboardList className="mr-2" />
+        My Orders
+      </button>
       <div className="flex p-4">
         {/* Sidebar */}
         <aside className="flex flex-col w-1/4 mr-4 space-y-4">
           {/* Event Selection Box */}
-          <div className="p-4 bg-white shadow rounded-xl min-h-[288px] flex flex-col justify-start">
+          <div className="p-4 mb-3 bg-white shadow rounded-xl min-h-[288px] flex flex-col justify-start">
             <h2 className="mb-4 text-xl font-semibold">Events</h2>
             <ul className="space-y-2">
               {events.map((event) => (
@@ -170,7 +255,7 @@ function EventMerchandisePage() {
 
         {/* Main Content */}
         <section className="flex flex-col flex-1">
-          <h2 className="mb-6 text-2xl font-semibold">
+          <h2 className="mb-0 text-2xl font-semibold">
             {getSelectedEvent().name} Merchandise
           </h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -299,7 +384,7 @@ function EventMerchandisePage() {
                       </label>
                       <button
                         type="submit"
-                        className={`ml-4 px-4 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition`}
+                        className={`ml-4 px-4 py-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-700 transition`}
                       >
                         Submit Order
                       </button>

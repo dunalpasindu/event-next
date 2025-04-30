@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 function Sidebar() {
   return (
-    <div className="bg-gray-900 text-white w-64 p-6 shadow-lg">
+    <div className="bg-gray-900 text-white w-64 min-h-max p-6 shadow-lg">
       <h2 className="text-2xl font-bold mb-8 text-center">EventNext</h2>
       <ul className="space-y-6">
       <li>

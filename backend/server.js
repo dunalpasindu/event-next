@@ -3,6 +3,9 @@ const express = require('express');
 const mongoose = require('mongoose'); // Import mongoose
 const cors = require('cors'); // Import CORS middleware
 const sponsorRoute = require('./routes/sponsorRoute'); // Import the sponsor route
+
+const eventRoute = require('./routes/eventRoute'); // Import the event route
+
 const accommodationRoute = require('./routes/accommodationRoute'); // Import the accommodation route
 const orderRoute = require('./routes/orderRoute')
 
@@ -22,12 +25,15 @@ mongoose.connect(MONGO_URI)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Failed to connect to MongoDB', err));
 
-// Use the sponsor route
+// Omin route
 app.use('/api/sponsors', sponsorRoute);
 app.use('/api/orders', orderRoute);
 
 // Use the accommodation route
 app.use('/api/accommodations', accommodationRoute);
+
+// Dula route
+app.use('/api/events', eventRoute);
 
 // Basic route
 app.get('/', (req, res) => {

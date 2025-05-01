@@ -50,55 +50,52 @@ function EventsList() {
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Events List</h1>
       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
       {events.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="table-auto w-full border-collapse bg-white shadow-md rounded-lg">
-            <thead className="bg-gray-200 text-gray-700">
-              <tr>
-                <th className="border border-gray-300 px-4 py-2 text-left">Organization Name</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Email</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Phone Number</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Event Type</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Number of Guests</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Dietary Preferences</th>
-                <th className="border border-gray-300 px-4 py-2 text-left">Additional Comments</th>
-                <th className="border border-gray-300 px-4 py-2 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {events.map((event, index) => (
-                <tr
-                  key={event._id}
-                  className={`${
-                    index % 2 === 0 ? 'bg-gray-50' : 'bg-white'
-                  } hover:bg-gray-100 transition duration-200`}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {events.map((event) => (
+            <div
+              key={event._id}
+              className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200"
+            >
+              <p className="text-gray-600 mb-1">
+              <strong>Company/ Organization:</strong> {event.organizationName}
+              </p>
+             
+              <p className="text-gray-600 mb-1">
+                <strong>Email:</strong> {event.email}
+              </p>
+              <p className="text-gray-600 mb-1">
+                <strong>Phone:</strong> {event.phoneNumber}
+              </p>
+              <p className="text-gray-600 mb-1">
+                <strong>Event Type:</strong> {event.eventType}
+              </p>
+              <p className="text-gray-600 mb-1">
+                <strong>Guests:</strong> {event.numberOfGuests}
+              </p>
+              <p className="text-gray-600 mb-1">
+                <strong>Dietary Preferences:</strong> {event.dietaryPreferences}
+              </p>
+              <p className="text-gray-600 mb-4">
+                <strong>Comments:</strong> {event.additionalComments}
+              </p>
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => handleUpdate(event._id)}
+                  className="text-blue-500 hover:text-blue-700 transition duration-200"
+                  title="Update"
                 >
-                  <td className="border border-gray-300 px-4 py-2">{event.organizationName}</td>
-                  <td className="border border-gray-300 px-4 py-2">{event.email}</td>
-                  <td className="border border-gray-300 px-4 py-2">{event.phoneNumber}</td>
-                  <td className="border border-gray-300 px-4 py-2">{event.eventType}</td>
-                  <td className="border border-gray-300 px-4 py-2">{event.numberOfGuests}</td>
-                  <td className="border border-gray-300 px-4 py-2">{event.dietaryPreferences}</td>
-                  <td className="border border-gray-300 px-4 py-2">{event.additionalComments}</td>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
-                    <button
-                      onClick={() => handleUpdate(event._id)}
-                      className="text-blue-500 hover:text-blue-700 transition duration-200 mr-4"
-                      title="Update"
-                    >
-                      <FaEdit size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(event._id)}
-                      className="text-red-500 hover:text-red-700 transition duration-200"
-                      title="Delete"
-                    >
-                      <FaTrash size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  <FaEdit size={20} />
+                </button>
+                <button
+                  onClick={() => handleDelete(event._id)}
+                  className="text-red-500 hover:text-red-700 transition duration-200"
+                  title="Delete"
+                >
+                  <FaTrash size={20} />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
         <p className="text-center text-gray-600">No events found.</p>

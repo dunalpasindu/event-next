@@ -4,6 +4,8 @@ const mongoose = require('mongoose'); // Import mongoose
 const cors = require('cors'); // Import CORS middleware
 const sponsorRoute = require('./routes/sponsorRoute'); // Import the sponsor route
 const accommodationRoute = require('./routes/accommodationRoute'); // Import the accommodation route
+const orderRoute = require('./routes/orderRoute')
+
 
 const app = express();
 const PORT = 3000;
@@ -22,6 +24,7 @@ mongoose.connect(MONGO_URI)
 
 // Use the sponsor route
 app.use('/api/sponsors', sponsorRoute);
+app.use('/api/orders', orderRoute);
 
 // Use the accommodation route
 app.use('/api/accommodations', accommodationRoute);

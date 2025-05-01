@@ -93,13 +93,13 @@ export const events = [
         id: "item5",
         name: "Glow Wristband",
         price: 5,
-        image: "https://ae01.alicdn.com/kf/Hc2b89d05797e45baac815eb16ff83d4b0.jpg"
+        image: "https://assets.trends.nz/Images/ProductImg/112807-4.jpg"
       },
       {
         id: "item6",
         name: "Cat-Eye Sunglasses",
         price: 8,
-        image: "https://www.hipoptical.com/cdn/shop/products/Bizan-Eyeglasses-Frontcopy.jpg"
+        image: "https://www.pilgrim.net/cdn/shop/files/752219105_638276716460000000.jpg?v=1713953907"
       }
     ],
     accommodations: [
@@ -162,6 +162,26 @@ export const events = [
   {
     id: "event3",
     name: "Startup Summit 2025",
+    merchandise: [
+      {
+        id: "item7",
+        name: "Summit Notebook",
+        price: 5,
+        image: "https://cdn3.evostore.io/productimages/ot_wholesale/l/464165_01.jpg"
+      },
+      {
+        id: "item8",
+        name: "Summit Keytag",
+        price: 4,
+        image: "https://www.olindha.lk/wp-content/uploads/2024/11/Genuine-Leather-Belle-Key-Tag-1.webp"
+      },
+      {
+        id: "item9",
+        name: "Summit Water Bottle",
+        price: 12,
+        image: "https://uncruise.com/cdn/shop/files/6647a383ea217240513cb342.png?v=1732833664"
+      }
+    ],
     accommodations: [
       {
         id: "acc9",
@@ -222,6 +242,26 @@ export const events = [
   {
     id: "event4",
     name: "Art Expo 2025",
+    merchandise: [
+      {
+        id: "item10",
+        name: "Expo Art Tote Bag",
+        price: 14,
+        image: "https://store.moma.org/cdn/shop/files/107257_a_3ee2486c-fc99-4f8a-b9b7-57e555ca5d7c.jpg?v=1704232676"
+      },
+      {
+        id: "item11",
+        name: "Expo Sketchbook",
+        price: 11,
+        image: "https://m.media-amazon.com/images/I/71Hkiby7mhL._AC_SX679_.jpg"
+      },
+      {
+        id: "item12",
+        name: "Expo Artist Badge",
+        price: 7,
+        image: "https://www.art-k.co.uk/wp-content/uploads/2024/09/bug-badges-1024x853.png"
+      }
+    ],
     accommodations: [
       {
         id: "acc11",

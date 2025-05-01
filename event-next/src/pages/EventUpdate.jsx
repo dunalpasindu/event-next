@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Assuming you're using React Router
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 
-function EventRegister() {
+function EventUpdate() {
+  const { id } = useParams(); // Get the event ID from the URL
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     organizationName: '',
     email: '',
@@ -11,10 +13,27 @@ function EventRegister() {
     dietaryPreferences: 'No Preference',
     additionalComments: '',
   });
-
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
-  const navigate = useNavigate(); // For navigation
+
+  useEffect(() => {
+    // Fetch the existing event data
+    const fetchEvent = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/events/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setFormData(data);
+        } else {
+          setErrors({ general: 'Failed to fetch event details' });
+        }
+      } catch (error) {
+        setErrors({ general: 'An error occurred while fetching event details' });
+      }
+    };
+
+    fetchEvent();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,8 +73,8 @@ function EventRegister() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/events/register', {
-        method: 'POST',
+      const response = await fetch(`http://localhost:3000/api/events/${id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -64,37 +83,20 @@ function EventRegister() {
 
       if (response.ok) {
         const data = await response.json();
-        setSuccessMessage(data.message);
-        setFormData({
-          organizationName: '',
-          email: '',
-          phoneNumber: '',
-          eventType: 'Workshop',
-          numberOfGuests: '',
-          dietaryPreferences: 'No Preference',
-          additionalComments: '',
-        });
-        setErrors({});
+        setSuccessMessage('Event updated successfully!');
+        setTimeout(() => navigate('/events-list'), 2000); // Redirect after 2 seconds
       } else {
         const errorData = await response.json();
         setErrors({ general: errorData.message });
       }
     } catch (error) {
-      setErrors({ general: 'An error occurred while submitting the form.' });
+      setErrors({ general: 'An error occurred while updating the event.' });
     }
   };
 
   return (
-    <div className='max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg relative'>
-      {/* My Events List Button */}
-      <button
-        onClick={() => navigate('/events-list')}
-        className="absolute top-6 right-6 bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        My Events List
-      </button>
-
-      <h1 className="text-2xl font-bold">Event Registration Form</h1>
+    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <h1 className="text-2xl font-bold mb-4">Update Event</h1>
       {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
       {errors.general && <p className="text-red-500 text-sm">{errors.general}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -183,11 +185,11 @@ function EventRegister() {
           />
         </div>
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-          Submit
+          Update
         </button>
       </form>
     </div>
   );
 }
 
-export default EventRegister;
+export default EventUpdate;

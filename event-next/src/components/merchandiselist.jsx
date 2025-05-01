@@ -28,6 +28,7 @@ function EventMerchandisePage() {
   const [totalPrice, setTotalPrice] = useState(
     getPurchaseEvent()?.merchandise.find((item) => item.id === purchaseItemId)?.price || 0
   );
+  const [alert, setAlert] = useState({ show: false, message: "", type: "success" });
 
   // Prefill form if editing
   useEffect(() => {
@@ -97,7 +98,7 @@ function EventMerchandisePage() {
         })
           .then((res) => res.json())
           .then(() => {
-            alert('Order updated!');
+            showAlert('Order updated!', "success");
             setCustomer({
               name: "",
               email: "",
@@ -109,9 +110,9 @@ function EventMerchandisePage() {
             });
             setSubmitted(false);
             setErrors({});
-            navigate("/my-orders");
+            setTimeout(() => navigate("/my-orders"), 2000); // Optional: auto-navigate after 1s
           })
-          .catch(() => alert('Failed to update order!'));
+          .catch(() => showAlert('Failed to update order!', "error"));
       } else {
         // Otherwise, create new order
         fetch('http://localhost:3000/api/orders', {
@@ -121,7 +122,7 @@ function EventMerchandisePage() {
         })
           .then((res) => res.json())
           .then(() => {
-            alert('Order submitted!');
+            showAlert('Order submitted!', "success");
             setCustomer({
               name: "",
               email: "",
@@ -134,7 +135,7 @@ function EventMerchandisePage() {
             setSubmitted(false);
             setErrors({});
           })
-          .catch(() => alert('Failed to submit order!'));
+          .catch(() => showAlert('Failed to submit order!', "error"));
       }
     }
   }
@@ -159,6 +160,10 @@ function EventMerchandisePage() {
     const item = getPurchaseEvent()?.merchandise.find((item) => item.id === purchaseItemId);
     setTotalPrice(item ? item.price * quantity : 0);
   }, [purchaseItemId, quantity, purchaseEventId]);
+
+  function showAlert(message, type = "success") {
+    setAlert({ show: true, message, type });
+  }
 
   return (
     <div className="relative min-h-screen bg-gray-50">
@@ -287,6 +292,7 @@ function EventMerchandisePage() {
                         className={`block w-full p-2 mt-1 border rounded ${errors.name && submitted ? "border-red-500" : ""}`}
                         value={customer.name}
                         onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
+                        placeholder="e.g. John Doe"
                       />
                       {errors.name && submitted && (
                         <span className="text-xs text-red-500">{errors.name}</span>
@@ -299,6 +305,7 @@ function EventMerchandisePage() {
                         className={`block w-full p-2 mt-1 border rounded ${errors.email && submitted ? "border-red-500" : ""}`}
                         value={customer.email}
                         onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
+                        placeholder="e.g. john@example.com"
                       />
                       {errors.email && submitted && (
                         <span className="text-xs text-red-500">{errors.email}</span>
@@ -311,6 +318,7 @@ function EventMerchandisePage() {
                         className={`block w-full p-2 mt-1 border rounded ${errors.phone && submitted ? "border-red-500" : ""}`}
                         value={customer.phone}
                         onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
+                        placeholder="e.g. 0776543210"
                       />
                       {errors.phone && submitted && (
                         <span className="text-xs text-red-500">{errors.phone}</span>
@@ -326,6 +334,7 @@ function EventMerchandisePage() {
                         className={`block w-full p-2 mt-1 border rounded ${errors.houseNo && submitted ? "border-red-500" : ""}`}
                         value={customer.houseNo || ""}
                         onChange={(e) => setCustomer({ ...customer, houseNo: e.target.value })}
+                        placeholder="e.g. 123"
                       />
                       {errors.houseNo && submitted && (
                         <span className="text-xs text-red-500">{errors.houseNo}</span>
@@ -338,6 +347,7 @@ function EventMerchandisePage() {
                         className={`block w-full p-2 mt-1 border rounded ${errors.addressLine && submitted ? "border-red-500" : ""}`}
                         value={customer.addressLine || ""}
                         onChange={(e) => setCustomer({ ...customer, addressLine: e.target.value })}
+                        placeholder="e.g. Main Street"
                       />
                       {errors.addressLine && submitted && (
                         <span className="text-xs text-red-500">{errors.addressLine}</span>
@@ -350,6 +360,7 @@ function EventMerchandisePage() {
                         className={`block w-full p-2 mt-1 border rounded ${errors.addressLine2 && submitted ? "border-red-500" : ""}`}
                         value={customer.addressLine2 || ""}
                         onChange={(e) => setCustomer({ ...customer, addressLine2: e.target.value })}
+                        placeholder="e.g. Near City Mall"
                       />
                       {errors.addressLine2 && submitted && (
                         <span className="text-xs text-red-500">{errors.addressLine2}</span>
@@ -399,6 +410,27 @@ function EventMerchandisePage() {
           </div>
         </section>
       </div>
+      {alert.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="w-full max-w-sm p-6 text-center bg-white rounded-lg shadow-lg">
+            <h2 className={`text-lg font-semibold mb-2 ${alert.type === "success" ? "text-green-600" : "text-red-600"}`}>
+              {alert.type === "success" ? "Success" : "Error"}
+            </h2>
+            <p className="mb-4">{alert.message}</p>
+            {/* Only show OK button if NOT "Order updated!" */}
+            {alert.message !== "Order updated!" && (
+              <button
+                className={`px-4 py-2 rounded text-white ${alert.type === "success" ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"}`}
+                onClick={() => {
+                  setAlert({ show: false, message: "", type: "success" });
+                }}
+              >
+                OK
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

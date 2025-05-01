@@ -13,6 +13,8 @@ function getItemImage(eventName, itemName) {
 function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showCancelConfirmation, setShowCancelConfirmation] = useState(false); // NEW
+  const [orderToCancel, setOrderToCancel] = useState(null); // NEW
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,20 +33,29 @@ function MyOrders() {
     fetchOrders();
   }, []);
 
-  // Cancel order handler
-  const handleCancelOrder = async (orderId) => {
-    if (!window.confirm("Are you sure you want to cancel this order?")) return;
+  // Open modal instead of confirm
+  const handleCancelOrder = (orderId) => {
+    setOrderToCancel(orderId);
+    setShowCancelConfirmation(true);
+  };
+
+  // Confirm cancel
+  const confirmCancelBooking = async () => {
+    if (!orderToCancel) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/${orderId}`, {
+      const res = await fetch(`http://localhost:3000/api/orders/${orderToCancel}`, {
         method: "DELETE",
       });
       if (res.ok) {
-        setOrders((prev) => prev.filter((order) => order._id !== orderId));
+        setOrders((prev) => prev.filter((order) => order._id !== orderToCancel));
       } else {
         alert("Failed to cancel order.");
       }
     } catch {
       alert("Failed to cancel order.");
+    } finally {
+      setShowCancelConfirmation(false);
+      setOrderToCancel(null);
     }
   };
 
@@ -59,6 +70,29 @@ function MyOrders() {
 
   return (
     <div className="max-w-4xl p-6 mx-auto mt-8 bg-white rounded-lg shadow-lg">
+      {/* Cancel Confirmation Modal */}
+      {showCancelConfirmation && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+            <h2 className="mb-4 text-xl font-semibold">Confirm Cancellation</h2>
+            <p className="mb-4">Are you sure you want to cancel this Order?</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                className="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded-lg"
+                onClick={() => setShowCancelConfirmation(false)}
+              >
+                No
+              </button>
+              <button
+                className="px-4 py-2 text-sm text-white bg-red-500 rounded-lg hover:bg-red-600"
+                onClick={confirmCancelBooking}
+              >
+                Yes, Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <h1 className="mb-6 text-3xl font-bold text-blue-600">My Orders</h1>
       {orders.length === 0 ? (
         <p className="text-gray-600">No orders found.</p>

@@ -9,6 +9,7 @@ import Accommodation from './pages/Accommodation';
 import MySponsorList from './pages/MySponsorList';
 import SponsorUpdate from './pages/SponsorUpdate';
 import MyOrders from './pages/MyOrders';
+import MyBookings from './pages/MyBookings';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="/my-sponsor-list" element={<MySponsorList />} />
             <Route path="/sponsor-update/:id" element={<SponsorUpdate />} />
             <Route path="/my-orders" element={<MyOrders />} />
+            <Route path="/my-bookings" element={<MyBookings />} />
           </Routes>
         </div>
       </div>

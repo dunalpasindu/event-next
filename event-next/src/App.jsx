@@ -29,7 +29,6 @@ function App() {
             <Route path="/merchandise" element={<Merchandise />} />
             <Route path="/accommodation" element={<Accommodation />} />
 
-            <Route path="/purchase" element={<PurchaseForm />} />
 
             <Route path="/my-sponsor-list" element={<MySponsorList />} />
             <Route path="/sponsor-update/:id" element={<SponsorUpdate />} />
@@ -37,8 +36,7 @@ function App() {
             <Route path="/events-list" element={<EventsList />} />
             <Route path="/event-update/:id" element={<EventUpdate />} />
 
-            <Route path="/my-sponsor-list" element={<MySponsorList />} />
-            <Route path="/sponsor-update/:id" element={<SponsorUpdate />} />
+           
             <Route path="/my-orders" element={<MyOrders />} />
             <Route path="/my-bookings" element={<MyBookings />} />
 

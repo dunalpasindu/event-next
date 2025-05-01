@@ -6,11 +6,15 @@ import EventRegister from './pages/EventRegister';
 import Sponsor from './pages/Sponsor';
 import Merchandise from './pages/Merchandise';
 import Accommodation from './pages/Accommodation';
-import PurchaseForm from './pages/PurchaseForm';
 import MySponsorList from './pages/MySponsorList';
 import SponsorUpdate from './pages/SponsorUpdate';
+
 import EventsList from './pages/EventsList';
 import EventUpdate from './pages/EventUpdate';
+
+import MyOrders from './pages/MyOrders';
+import MyBookings from './pages/MyBookings';
+
 
 function App() {
   return (
@@ -24,6 +28,7 @@ function App() {
             <Route path="/sponsor" element={<Sponsor />} />
             <Route path="/merchandise" element={<Merchandise />} />
             <Route path="/accommodation" element={<Accommodation />} />
+
             <Route path="/purchase" element={<PurchaseForm />} />
 
             <Route path="/my-sponsor-list" element={<MySponsorList />} />
@@ -31,6 +36,12 @@ function App() {
 
             <Route path="/events-list" element={<EventsList />} />
             <Route path="/event-update/:id" element={<EventUpdate />} />
+
+            <Route path="/my-sponsor-list" element={<MySponsorList />} />
+            <Route path="/sponsor-update/:id" element={<SponsorUpdate />} />
+            <Route path="/my-orders" element={<MyOrders />} />
+            <Route path="/my-bookings" element={<MyBookings />} />
+
           </Routes>
         </div>
       </div>

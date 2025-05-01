@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { events } from "../data/events";
 import { FaClipboardList } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +20,8 @@ function AccommodationList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
+  const [filteredAccommodations, setFilteredAccommodations] = useState([]);
 
   const getSelectedEvent = () => {
     return events.find((event) => event.id === selectedEventId);
@@ -53,7 +55,14 @@ function AccommodationList() {
         accommodationId: selectedAccommodation.id,
         accommodationName: selectedAccommodation.name,
         price: selectedAccommodation.price,
-        customer,
+        customer: {
+          name: customer.name,
+          email: customer.email,
+          phone: customer.phone,
+          checkIn: customer.checkIn,
+          checkOut: customer.checkOut,
+          message: customer.message,
+        },
       };
 
       try {
@@ -64,13 +73,15 @@ function AccommodationList() {
         });
 
         if (response.ok) {
-          alert("Accommodation booked successfully!");
+          setSuccessMessage("Your booking was successful! Thank you for choosing us.");
+          setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
           setCustomer({ name: "", email: "", phone: "", checkIn: "", checkOut: "", message: "" });
           setSubmitted(false);
           setErrors({});
           setSelectedAccommodation(null);
         } else {
-          alert("Failed to book accommodation.");
+          setSuccessMessage("Failed to book accommodation. Please try again.");
+          setTimeout(() => setSuccessMessage(""), 3000); // Clear message after 3 seconds
         }
       } catch (error) {
         console.error("Error booking accommodation:", error);
@@ -80,8 +91,18 @@ function AccommodationList() {
   };
 
   const applyFilters = () => {
-    // Logic to apply filters based on searchQuery, minPrice, and maxPrice
+    const filteredAccommodations = getSelectedEvent().accommodations.filter((acc) => {
+      const matchesSearchQuery = acc.name.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesMinPrice = minPrice === "" || acc.price >= parseFloat(minPrice);
+      const matchesMaxPrice = maxPrice === "" || acc.price <= parseFloat(maxPrice);
+      return matchesSearchQuery && matchesMinPrice && matchesMaxPrice;
+    });
+    setFilteredAccommodations(filteredAccommodations);
   };
+
+  useEffect(() => {
+    applyFilters();
+  }, [searchQuery, minPrice, maxPrice, selectedEventId]);
 
   return (
     <div className="relative min-h-screen bg-gray-50">
@@ -97,17 +118,17 @@ function AccommodationList() {
 
       <div className="flex p-4">
         {/* Sidebar */}
-        <aside className="flex flex-col w-1/5 mr-4 space-y-4"> {/* Adjusted width to 1/5 */}
+        <aside className="flex flex-col w-1/5 mr-4 space-y-4">
           {/* Event Selection Box */}
-          <div className="p-4 mb-3 bg-white shadow rounded-xl min-h-[288px] flex flex-col justify-start">
+          <div className="p-4 mb-3 bg-gray-200 shadow rounded-xl min-h-[288px] flex flex-col justify-start">
             <h2 className="mb-4 text-xl font-semibold">Events</h2>
             <ul className="space-y-2">
               {events.map((event) => (
                 <li
                   key={event.id}
                   onClick={() => setSelectedEventId(event.id)}
-                  className={`cursor-pointer px-3 py-2 rounded-lg hover:bg-blue-100 ${
-                    event.id === selectedEventId ? "bg-blue-200 font-bold" : ""
+                  className={`cursor-pointer px-3 py-2 rounded-lg hover:bg-blue-300 transition-all duration-200 ease-in-out transform hover:scale-105 ${
+                    event.id === selectedEventId ? "bg-blue-400 font-bold" : ""
                   }`}
                 >
                   {event.name}
@@ -117,13 +138,13 @@ function AccommodationList() {
           </div>
 
           {/* Filter Panel */}
-          <div className="p-4 bg-white shadow rounded-xl">
+          <div className="p-4 bg-gray-300 shadow rounded-xl">
             <h2 className="mb-4 text-xl font-semibold">Filters</h2>
             <div className="mb-4">
               <label className="block mb-2 text-sm font-medium">Search by Name</label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border rounded-lg"
+                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 placeholder="Enter name"
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -133,20 +154,24 @@ function AccommodationList() {
               <div className="flex items-center space-x-2">
                 <input
                   type="number"
-                  className="w-1/2 px-3 py-2 border rounded-lg"
+                  className="w-1/2 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Min"
+                  min="0"
+                  max="5000"
                   onChange={(e) => setMinPrice(e.target.value)}
                 />
                 <input
                   type="number"
-                  className="w-1/2 px-3 py-2 border rounded-lg"
+                  className="w-1/2 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   placeholder="Max"
+                  min="0"
+                  max="5000"
                   onChange={(e) => setMaxPrice(e.target.value)}
                 />
               </div>
             </div>
             <button
-              className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+              className="w-full px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-all duration-200 ease-in-out transform hover:scale-105"
               onClick={applyFilters}
             >
               Apply Filters
@@ -155,21 +180,26 @@ function AccommodationList() {
         </aside>
 
         {/* Main Content */}
-        <section className="flex flex-col flex-1">
+        <section className="flex flex-col flex-1 overflow-y-auto h-[calc(100vh-100px)]">
           <h2 className="mb-0 text-2xl font-semibold">
             {getSelectedEvent().name} Accommodations
           </h2>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"> {/* Adjusted grid layout for 3 cards per row */}
-            {getSelectedEvent().accommodations.map((acc) => (
+          {successMessage && (
+            <div className="p-4 mb-4 text-green-800 bg-green-100 border border-green-300 rounded">
+              {successMessage}
+            </div>
+          )}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredAccommodations.map((acc) => (
               <div
                 key={acc.id}
-                className="flex flex-col items-center p-6 bg-white shadow rounded-xl cursor-pointer" /* Adjusted padding for larger cards */
+                className="flex flex-col items-center p-6 bg-white shadow rounded-xl cursor-pointer hover:shadow-lg transition-all duration-200 ease-in-out transform hover:scale-105"
                 onClick={() => setSelectedAccommodation(acc)}
               >
                 <img
                   src={acc.image}
                   alt={acc.name}
-                  className="object-cover w-full h-[300px] mb-4 rounded-lg" /* Adjusted image size to 4:3 ratio */
+                  className="object-cover w-full h-[300px] mb-4 rounded-lg"
                 />
                 <h3 className="text-lg font-medium">{acc.name}</h3>
                 <p className="mb-2 text-gray-600">${acc.price}</p>
@@ -190,6 +220,7 @@ function AccommodationList() {
                 <input
                   type="text"
                   className="w-full px-3 py-2 border rounded-lg"
+                  placeholder="Enter your full name"
                   value={customer.name}
                   onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
                 />
@@ -200,6 +231,7 @@ function AccommodationList() {
                 <input
                   type="email"
                   className="w-full px-3 py-2 border rounded-lg"
+                  placeholder="Enter your email address"
                   value={customer.email}
                   onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
                 />
@@ -210,6 +242,7 @@ function AccommodationList() {
                 <input
                   type="text"
                   className="w-full px-3 py-2 border rounded-lg"
+                  placeholder="Enter your 10-digit phone number"
                   value={customer.phone}
                   onChange={(e) => setCustomer({ ...customer, phone: e.target.value })}
                 />
@@ -239,6 +272,7 @@ function AccommodationList() {
                 <label className="block mb-1 text-sm font-medium">Message</label>
                 <textarea
                   className="w-full px-3 py-2 border rounded-lg"
+                  placeholder="Optional: Add any special requests or notes"
                   value={customer.message}
                   onChange={(e) => setCustomer({ ...customer, message: e.target.value })}
                 ></textarea>

@@ -10,10 +10,11 @@ function EventRegister() {
     numberOfGuests: '',
     dietaryPreferences: 'No Preference',
     additionalComments: '',
-  });  
+  });
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false); // Loading state
   const navigate = useNavigate(); // For navigation
 
   const handleChange = (e) => {
@@ -21,7 +22,6 @@ function EventRegister() {
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: '' }); // Clear error for the field being updated
   };
-  
 
   const validate = () => {
     const newErrors = {};
@@ -54,6 +54,7 @@ function EventRegister() {
       return;
     }
 
+    setIsSubmitting(true); // Set loading state
     try {
       const response = await fetch('http://localhost:3000/api/events/register', {
         method: 'POST',
@@ -82,7 +83,23 @@ function EventRegister() {
       }
     } catch (error) {
       setErrors({ general: 'An error occurred while submitting the form.' });
+    } finally {
+      setIsSubmitting(false); // Reset loading state
     }
+  };
+
+  const handleReset = () => {
+    setFormData({
+      organizationName: '',
+      email: '',
+      phoneNumber: '',
+      eventType: 'Workshop',
+      numberOfGuests: '',
+      dietaryPreferences: 'No Preference',
+      additionalComments: '',
+    });
+    setErrors({});
+    setSuccessMessage('');
   };
 
   return (
@@ -90,7 +107,7 @@ function EventRegister() {
       {/* My Events List Button */}
       <button
         onClick={() => navigate('/events-list')}
-        className="absolute top-6 right-6 bg-blue-500 text-white px-4 py-2 rounded"
+        className="absolute top-6 right-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
       >
         My Events List
       </button>
@@ -99,93 +116,123 @@ function EventRegister() {
       {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
       {errors.general && <p className="text-red-500 text-sm">{errors.general}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block font-medium">Organization / Company Name</label>
-          <input
-            type="text"
-            name="organizationName"
-            value={formData.organizationName}
-            onChange={handleChange}
-            className="border rounded w-full p-2"
-            required
-          />
-          {errors.organizationName && <p className="text-red-500 text-sm">{errors.organizationName}</p>}
-        </div>
-        <div>
-          <label className="block font-medium">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="border rounded w-full p-2"
-            required
-          />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-        </div>
-        <div>
-          <label className="block font-medium">Phone Number</label>
-          <input
-            type="tel"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            className="border rounded w-full p-2"
-            required
-          />
-          {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
-        </div>
-        <div>
-          <label className="block font-medium">Select Event Type</label>
-          <select
-            name="eventType"
-            value={formData.eventType}
-            onChange={handleChange}
-            className="border rounded w-full p-2"
+        <fieldset>
+          <legend className="text-lg font-medium">Organization Details</legend>
+          <div>
+            <label className="block font-medium">Organization / Company Name</label>
+            <input
+              type="text"
+              name="organizationName"
+              value={formData.organizationName}
+              onChange={handleChange}
+              className="border rounded w-full p-2"
+              placeholder="Enter your organization name"
+              required
+              aria-required="true"
+            />
+            {errors.organizationName && <p className="text-red-500 text-sm">{errors.organizationName}</p>}
+          </div>
+          <div>
+            <label className="block font-medium">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="border rounded w-full p-2"
+              placeholder="Enter your email"
+              required
+              aria-required="true"
+            />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend className="text-lg font-medium">Event Details</legend>
+          <div>
+            <label className="block font-medium">Phone Number</label>
+            <input
+              type="tel"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              className="border rounded w-full p-2"
+              placeholder="Enter your phone number"
+              required
+              aria-required="true"
+            />
+            {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber}</p>}
+          </div>
+          <div>
+            <label className="block font-medium">Select Event Type</label>
+            <select
+              name="eventType"
+              value={formData.eventType}
+              onChange={handleChange}
+              className="border rounded w-full p-2"
+            >
+              <option value="Workshop">Workshop</option>
+              <option value="Seminar">Seminar</option>
+              <option value="Meetup">Meetup</option>
+            </select>
+          </div>
+          <div>
+            <label className="block font-medium">Number of Guests</label>
+            <input
+              type="number"
+              name="numberOfGuests"
+              value={formData.numberOfGuests}
+              onChange={handleChange}
+              className="border rounded w-full p-2"
+              placeholder="Enter number of guests"
+              required
+              aria-required="true"
+            />
+            {errors.numberOfGuests && <p className="text-red-500 text-sm">{errors.numberOfGuests}</p>}
+          </div>
+          <div>
+            <label className="block font-medium">Dietary Preferences</label>
+            <select
+              name="dietaryPreferences"
+              value={formData.dietaryPreferences}
+              onChange={handleChange}
+              className="border rounded w-full p-2"
+            >
+              <option value="Vegetarian">Vegetarian</option>
+              <option value="Vegan">Vegan</option>
+              <option value="Halal">Halal</option>
+              <option value="No Preference">No Preference</option>
+            </select>
+          </div>
+          <div>
+            <label className="block font-medium">Additional Comments</label>
+            <textarea
+              name="additionalComments"
+              value={formData.additionalComments}
+              onChange={handleChange}
+              className="border rounded w-full p-2"
+              placeholder="Enter any additional comments"
+            />
+          </div>
+        </fieldset>
+
+        <div className="flex space-x-4">
+          <button
+            type="submit"
+            className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={isSubmitting}
           >
-            <option value="Workshop">Workshop</option>
-            <option value="Seminar">Seminar</option>
-            <option value="Meetup">Meetup</option>
-          </select>
-        </div>
-        <div>
-          <label className="block font-medium">Number of Guests</label>
-          <input
-            type="number"
-            name="numberOfGuests"
-            value={formData.numberOfGuests}
-            onChange={handleChange}
-            className="border rounded w-full p-2"
-            required
-          />
-          {errors.numberOfGuests && <p className="text-red-500 text-sm">{errors.numberOfGuests}</p>}
-        </div>
-        <div>
-          <label className="block font-medium">Dietary Preferences</label>
-          <select
-            name="dietaryPreferences"
-            value={formData.dietaryPreferences}
-            onChange={handleChange}
-            className="border rounded w-full p-2"
+            {isSubmitting ? 'Submitting...' : 'Submit'}
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
           >
-            <option value="Vegetarian">Vegetarian</option>
-            <option value="Vegan">Vegan</option>
-            <option value="Halal">Halal</option>
-            <option value="No Preference">No Preference</option>
-          </select>
+            Reset
+          </button>
         </div>
-        <div>
-          <label className="block font-medium">Additional Comments</label>
-          <textarea
-            name="additionalComments"
-            value={formData.additionalComments}
-            onChange={handleChange}
-            className="border rounded w-full p-2"
-          />
-        </div>
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
-          Submit
-        </button>
       </form>
     </div>
   );

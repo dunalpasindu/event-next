@@ -74,7 +74,7 @@ function AccommodationList() {
 
         if (response.ok) {
           setSuccessMessage("Your booking was successful! Thank you for choosing us.");
-          setTimeout(() => setSuccessMessage(""), 90000); // Clear message after 3 seconds
+          setTimeout(() => setSuccessMessage(""), 5000); // Clear message after 3 seconds
           setCustomer({ name: "", email: "", phone: "", checkIn: "", checkOut: "", message: "" });
           setSubmitted(false);
           setErrors({});

@@ -90,7 +90,7 @@ function MyBookings() {
       if (res.ok) {
         setBookings((prev) => prev.filter((booking) => booking._id !== bookingToCancel));
         setCancelSuccessMessage("Booking canceled successfully.");
-        setTimeout(() => setCancelSuccessMessage(""), 90000); // Clear message after 3 seconds
+        setTimeout(() => setCancelSuccessMessage(""), 5000); // Clear message after 3 seconds
       } else {
         setCancelSuccessMessage("Failed to cancel booking. Please try again.");
         setTimeout(() => setCancelSuccessMessage(""), 3000); // Clear message after 3 seconds
@@ -132,7 +132,7 @@ function MyBookings() {
         );
         setEditingBooking(null);
         setCancelSuccessMessage("Booking updated successfully.");
-        setTimeout(() => setCancelSuccessMessage(""), 90000); // Clear message after 3 seconds
+        setTimeout(() => setCancelSuccessMessage(""), 5000); // Clear message after 3 seconds
       } else {
         setCancelSuccessMessage("Failed to update booking. Please try again.");
         setTimeout(() => setCancelSuccessMessage(""), 3000); // Clear message after 3 seconds

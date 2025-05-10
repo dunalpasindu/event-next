@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { events } from "../data/events";
-import { FaClipboardList } from "react-icons/fa";
+import { FaClipboardList, FaTimes } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function EventMerchandisePage() {
@@ -11,8 +11,8 @@ function EventMerchandisePage() {
   const editOrder = location.state?.editOrder;
 
   const [selectedEventId, setSelectedEventId] = useState(events[0].id);
-  const [purchaseEventId, setPurchaseEventId] = useState(events[0].id);
-  const [purchaseItemId, setPurchaseItemId] = useState(events[0].merchandise[0]?.id || "");
+  const [purchaseEventId, setPurchaseEventId] = useState(""); // Empty initial value
+  const [purchaseItemId, setPurchaseItemId] = useState(""); // Empty initial value
   const [customer, setCustomer] = useState({
     name: "",
     email: "",
@@ -33,10 +33,16 @@ function EventMerchandisePage() {
   // Prefill form if editing
   useEffect(() => {
     if (editOrder) {
+      // First set the event ID to ensure item options are available
       setSelectedEventId(editOrder.eventId);
       setPurchaseEventId(editOrder.eventId);
-      setPurchaseItemId(editOrder.itemId);
-      setQuantity(editOrder.quantity);
+      
+      // Then, ensure we wait for the next render cycle before setting the item
+      setTimeout(() => {
+        setPurchaseItemId(editOrder.itemId);
+        setQuantity(editOrder.quantity || 1);
+      }, 0);
+      
       setCustomer({
         ...editOrder.customer,
         paymentMethod: editOrder.paymentMethod || "cash",
@@ -71,13 +77,30 @@ function EventMerchandisePage() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    
+    // Check if an item is selected first - applies to both new orders and updates
+    if (!purchaseItemId || purchaseItemId === "") {
+      showAlert('Please Choose an Item to Submit The Order', "error");
+      return;
+    }
+    
     const validationErrors = validate(customer);
     setErrors(validationErrors);
     setSubmitted(true);
     if (Object.keys(validationErrors).length === 0) {
       // Prepare order data
       const eventObj = getPurchaseEvent();
-      const itemObj = eventObj?.merchandise.find((item) => item.id === purchaseItemId);
+      if (!eventObj) {
+        showAlert('Please select a valid event', "error");
+        return;
+      }
+      
+      const itemObj = eventObj.merchandise.find((item) => item.id === purchaseItemId);
+      if (!itemObj) {
+        showAlert('Please select a valid item', "error");
+        return;
+      }
+      
       const orderData = {
         eventId: eventObj.id,
         eventName: eventObj.name,
@@ -144,21 +167,52 @@ function EventMerchandisePage() {
 
   // Update item dropdown when event changes
   useEffect(() => {
-    // Only auto-select if not editing
-    if (!editOrder) {
+    if (purchaseEventId) {
       const event = getPurchaseEvent();
+      // Event exists and has merchandise
       if (event && event.merchandise.length > 0) {
-        setPurchaseItemId(event.merchandise[0].id);
+        // During initial edit, keep the selected item
+        if (editOrder && editOrder.eventId === purchaseEventId && editOrder.itemId) {
+          // Check if the item still exists in the event's merchandise
+          const itemExists = event.merchandise.some(item => item.id === editOrder.itemId);
+          if (itemExists) {
+            setPurchaseItemId(editOrder.itemId);
+          } else {
+            // If item no longer exists in the event, select the first one
+            setPurchaseItemId(event.merchandise[0].id);
+          }
+        } 
+        // If not editing or changing event during edit, select first item
+        else if (!editOrder || (editOrder && editOrder.eventId !== purchaseEventId)) {
+          setPurchaseItemId(event.merchandise[0].id);
+        }
       } else {
         setPurchaseItemId("");
+      }
+    } else {
+      // No event selected (placeholder selected)
+      setPurchaseItemId("");
+      if (!editOrder || purchaseEventId === "") {
+        setQuantity(1);
       }
     }
     // eslint-disable-next-line
   }, [purchaseEventId]);
 
+  // Update total price when item or quantity changes
   React.useEffect(() => {
-    const item = getPurchaseEvent()?.merchandise.find((item) => item.id === purchaseItemId);
-    setTotalPrice(item ? item.price * quantity : 0);
+    if (purchaseItemId && purchaseEventId) {
+      const event = getPurchaseEvent();
+      if (event) {
+        const item = event.merchandise.find((item) => item.id === purchaseItemId);
+        if (item) {
+          setTotalPrice(item.price * quantity);
+          return;
+        }
+      }
+    }
+    // In any other case (no event, no item, etc.), set price to 0
+    setTotalPrice(0);
   }, [purchaseItemId, quantity, purchaseEventId]);
 
   function showAlert(message, type = "success") {
@@ -186,7 +240,9 @@ function EventMerchandisePage() {
               {events.map((event) => (
                 <li
                   key={event.id}
-                  onClick={() => setSelectedEventId(event.id)}
+                  onClick={() => {
+                    setSelectedEventId(event.id);
+                  }}
                   className={`cursor-pointer px-3 py-2 rounded-lg hover:bg-blue-100 ${
                     event.id === selectedEventId ? "bg-blue-200 font-bold" : ""
                   }`}
@@ -198,15 +254,23 @@ function EventMerchandisePage() {
           </div>
           {/* Purchase Item Box */}
           <div className="p-4 bg-gray-100 rounded-lg shadow mt-25">  
-            <h3 className="mb-3 text-lg font-semibold">Purchase Item</h3>
+            <h3 className="mb-0 text-lg font-semibold">Purchase Item</h3>
             <form>
               <label className="block mb-2 text-sm font-medium">
                 Select Event
                 <select
                   className="block w-full p-2 mt-1 mb-3 border rounded"
                   value={purchaseEventId}
-                  onChange={(e) => setPurchaseEventId(e.target.value)}
+                  onChange={(e) => {
+                    const newEventId = e.target.value;
+                    setPurchaseEventId(newEventId);
+                    // Also update the selected event in the sidebar to match
+                    if (newEventId) {
+                      setSelectedEventId(newEventId);
+                    }
+                  }}
                 >
+                  <option value="">-- Select an Event --</option>
                   {events.map((event) => (
                     <option key={event.id} value={event.id}>
                       {event.name}
@@ -220,39 +284,48 @@ function EventMerchandisePage() {
                   className="block w-full p-2 mt-1 mb-3 border rounded"
                   value={purchaseItemId}
                   onChange={(e) => setPurchaseItemId(e.target.value)}
-                  disabled={!getPurchaseEvent() || getPurchaseEvent().merchandise.length === 0}
+                  disabled={!purchaseEventId}
                 >
-                  {getPurchaseEvent() &&
-                    getPurchaseEvent().merchandise.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        {item.name}
-                      </option>
-                    ))}
+                  <option value="">-- Select an Item --</option>
+                  {purchaseEventId && getPurchaseEvent()?.merchandise.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </label>
               {/* Quantity Radio Buttons */}
               <div className="flex items-center mb-3">
                 <span className="block text-sm font-medium mr-9 min-w-[77px]">Quantity</span>
-                <div className="flex space-x-4">
-                  {[1, 2, 3].map((num) => (
-                    <label key={num} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="quantity"
-                        value={num}
-                        checked={quantity === num}
-                        onChange={() => setQuantity(num)}
-                        className="mr-1"
-                      />
-                      {num}
-                    </label>
-                  ))}
-                </div>
+                {!purchaseItemId || purchaseItemId === "" ? (
+                  <div className="italic text-gray-500">-- Select Item First --</div>
+                ) : (
+                  <div className="flex space-x-4">
+                    {[1, 2, 3].map((num) => (
+                      <label key={num} className="flex items-center">
+                        <input
+                          type="radio"
+                          name="quantity"
+                          value={num}
+                          checked={quantity === num}
+                          onChange={() => setQuantity(num)}
+                          className="mr-1"
+                        />
+                        {num}
+                      </label>
+                    ))}
+                  </div>
+                )}
               </div>
+
               {/* Total Price */}
               <div className="flex items-center mb-1">
                 <span className="block text-sm font-medium mr-9 min-w-[77px]">Total Price</span>
-                <div className="font-semibold">${totalPrice.toFixed(2)}</div>
+                {!purchaseItemId || purchaseItemId === "" ? (
+                  <div className="italic text-gray-500">-- Select Item To See Total Price --</div>
+                ) : (
+                  <div className="font-semibold">${totalPrice.toFixed(2)}</div>
+                )}
               </div>
             </form>
           </div>
@@ -397,8 +470,19 @@ function EventMerchandisePage() {
                         type="submit"
                         className={`ml-4 px-4 py-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-700 transition`}
                       >
-                        Submit Order
+                        {editOrder ? "Update Order" : "Submit Order"}
                       </button>
+                      
+                      {/* Cancel Edit button - only show when editing */}
+                      {editOrder && (
+                        <button
+                          type="button"
+                          className="flex items-center px-4 py-2 ml-2 font-semibold text-white transition bg-gray-500 rounded hover:bg-gray-700"
+                          onClick={() => navigate("/my-orders")}
+                        >
+                          <FaTimes className="mr-1" /> Cancel Edit
+                        </button>
+                      )}
                     </div>
                     {errors.paymentMethod && submitted && (
                       <span className="mt-2 text-xs text-red-500">{errors.paymentMethod}</span>

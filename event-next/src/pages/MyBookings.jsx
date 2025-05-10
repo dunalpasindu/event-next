@@ -52,7 +52,21 @@ function MyBookings() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        setBookings(data);
+        // Sort bookings so newest (by creation date or _id) are at the top
+        const sorted = Array.isArray(data)
+          ? [...data].sort((a, b) => {
+              // Prefer createdAt if available, else fallback to _id
+              if (a.createdAt && b.createdAt) {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+              }
+              // Fallback: sort by _id (MongoDB ObjectId is time-based)
+              if (a._id && b._id) {
+                return b._id.localeCompare(a._id);
+              }
+              return 0;
+            })
+          : data;
+        setBookings(sorted);
       } catch (error) {
         console.error("Error fetching bookings:", error);
         alert("Failed to fetch bookings. Please try again later.");
@@ -76,7 +90,7 @@ function MyBookings() {
       if (res.ok) {
         setBookings((prev) => prev.filter((booking) => booking._id !== bookingToCancel));
         setCancelSuccessMessage("Booking canceled successfully.");
-        setTimeout(() => setCancelSuccessMessage(""), 3000); // Clear message after 3 seconds
+        setTimeout(() => setCancelSuccessMessage(""), 5000); // Clear message after 3 seconds
       } else {
         setCancelSuccessMessage("Failed to cancel booking. Please try again.");
         setTimeout(() => setCancelSuccessMessage(""), 3000); // Clear message after 3 seconds
@@ -118,7 +132,7 @@ function MyBookings() {
         );
         setEditingBooking(null);
         setCancelSuccessMessage("Booking updated successfully.");
-        setTimeout(() => setCancelSuccessMessage(""), 3000); // Clear message after 3 seconds
+        setTimeout(() => setCancelSuccessMessage(""), 5000); // Clear message after 3 seconds
       } else {
         setCancelSuccessMessage("Failed to update booking. Please try again.");
         setTimeout(() => setCancelSuccessMessage(""), 3000); // Clear message after 3 seconds

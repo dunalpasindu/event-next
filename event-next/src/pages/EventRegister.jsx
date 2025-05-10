@@ -10,7 +10,7 @@ function EventRegister() {
     numberOfGuests: '',
     dietaryPreferences: 'No Preference',
     additionalComments: '',
-  }); 
+  });  
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
@@ -21,6 +21,7 @@ function EventRegister() {
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: '' }); // Clear error for the field being updated
   };
+  
 
   const validate = () => {
     const newErrors = {};

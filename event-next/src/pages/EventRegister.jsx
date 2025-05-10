@@ -10,7 +10,7 @@ function EventRegister() {
     numberOfGuests: '',
     dietaryPreferences: 'No Preference',
     additionalComments: '',
-  });
+  }); 
 
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');

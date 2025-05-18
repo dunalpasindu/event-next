@@ -9,6 +9,10 @@
   <em>Effortless event organization for students & organizers</em>
 </p>
 
+<p align="center">
+  <img src="https://img.icons8.com/fluency/24/000000/test-passed.png" width="20" style="vertical-align:middle;"/> <b>This project is designed for both manual and automated testing.<br>It is an academic project suitable for coursework, demos, and learning.</b>
+</p>
+
 ---
 
 ## 🚀 Features

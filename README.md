@@ -1,14 +1,23 @@
-# EventNext
+<p align="center">
+  <img src="https://img.icons8.com/color/96/000000/event-accepted-tentatively.png" width="80"/>
+</p>
 
-EventNext is a comprehensive event management platform designed to simplify the process of organizing and managing events. This project includes both a frontend built with React and a backend powered by Node.js and Express, with MongoDB as the database. The platform supports features like event registration, sponsor interest management, merchandise sales, and accommodation bookings.
+<h1 align="center">EventNext <a href="LICENSE.md"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License"/></a></h1>
 
-## Features
+<p align="center">
+  <b>Modern Academic Event Management Platform</b> <br/>
+  <em>Effortless event organization for students & organizers</em>
+</p>
 
-### Frontend
-- Built with React and Vite for fast development and performance.
-- Tailwind CSS for modern and responsive UI design.
-- React Router for seamless navigation between pages.
-- Pages include:
+---
+
+## 🚀 Features
+
+### 🖥️ Frontend
+- ⚡ <b>React + Vite</b> for blazing-fast development
+- 🎨 <b>Tailwind CSS</b> for a modern, responsive UI
+- 🔀 <b>React Router</b> for smooth navigation
+- 📄 <b>Pages:</b>
   - Home
   - Event Registration
   - Sponsor Interest
@@ -18,18 +27,17 @@ EventNext is a comprehensive event management platform designed to simplify the 
   - My Bookings
   - My Sponsor List
 
-### Backend
-- Built with Node.js and Express.
-- MongoDB for data storage.
-- RESTful API endpoints for:
-  - Sponsors
-  - Orders
-  - Accommodations
-- Middleware for CORS and JSON parsing.
+### 🛠️ Backend
+- 🟢 <b>Node.js + Express</b> server
+- 🍃 <b>MongoDB</b> for data storage
+- 🔗 <b>RESTful API</b> endpoints: Sponsors, Orders, Accommodations
+- 🧩 Middleware for CORS & JSON parsing
 
-## Project Structure
+---
 
-```
+## 🏗️ Project Structure
+
+```text
 EventNext/
 ├── backend/                # Backend server files
 │   ├── models/            # Mongoose models
@@ -46,78 +54,93 @@ EventNext/
 └── README.md              # Project documentation
 ```
 
-## Installation
+---
 
-### Prerequisites
-- Node.js (v16 or later)
-- MongoDB
+## ⚡ Quick Start
 
-### Steps
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd event-next
-   ```
+### 1. Prerequisites
+- <img src="https://img.icons8.com/color/24/000000/nodejs.png" width="20"/> [Node.js](https://nodejs.org/) (v16 or later)
+- <img src="https://img.icons8.com/color/24/000000/mongodb.png" width="20"/> [MongoDB](https://www.mongodb.com/)
 
-2. Install dependencies for both backend and frontend:
-   ```bash
-   cd backend
-   npm install
-   cd ../event-next
-   npm install
-   ```
+### 2. Clone the Repository
+```bash
+git clone <repository-url>
+cd event-next
+```
 
-3. Configure environment variables:
-   - Create a `.env` file in the `backend` folder.
-   - Add the following:
-     ```env
-     MONGO_URI=<your-mongodb-connection-string>
-     ```
+### 3. Install Dependencies
+```bash
+cd backend
+npm install
+cd ../event-next
+npm install
+```
 
-4. Run the project:
-   - Use the `run.bat` file to start both the backend and frontend simultaneously.
-   - Alternatively, you can start them manually:
-     ```bash
-     # In one terminal (backend)
-     cd backend
-     node server.js
+### 4. Configure Environment Variables
+- Create a `.env` file in the `backend` folder:
+  ```env
+  MONGO_URI=<your-mongodb-connection-string>
+  ```
 
-     # In another terminal (frontend)
-     cd event-next
-     npm run dev
-     ```
+### 5. Run the Project
+- <b>Recommended:</b> Use the script to start both servers:
+  ```bash
+  ./run.bat
+  ```
+- <b>Or manually:</b>
+  ```bash
+  # Terminal 1 (backend)
+  cd backend
+  node server.js
 
-5. Open the application in your browser at `http://localhost:5173`.
+  # Terminal 2 (frontend)
+  cd event-next
+  npm run dev
+  ```
 
-## Testing
+- Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-This project is designed for both manual and automated testing.
+---
 
-### Manual Testing
-- Navigate through the application to test features like event registration, sponsor interest, merchandise purchase, and accommodation booking.
-- Verify data persistence by checking the MongoDB database.
+## 🧪 Testing
 
-### Automated Testing
-- Add automated tests using tools like Jest for the backend and React Testing Library for the frontend.
-- Future plans include integrating CI/CD pipelines for automated testing.
+> This project is designed for both <b>manual</b> and <b>automated</b> testing. It is an <b>academic project</b> suitable for coursework, demos, and learning.
 
-## Contributing
+### Manual
+- Explore the app: register for events, express sponsor interest, buy merchandise, book accommodation.
+- Check MongoDB for data persistence.
 
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Commit your changes and push them to your fork.
-4. Submit a pull request.
+### Automated
+- Add tests with <b>Jest</b> (backend) and <b>React Testing Library</b> (frontend).
+- CI/CD integration planned.
 
-## License
+---
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+## 🤝 Contributing
+1. Fork the repo
+2. Create a new branch
+3. Commit & push your changes
+4. Open a pull request
 
-## Acknowledgments
+---
 
-- [React](https://reactjs.org/)
-- [Vite](https://vitejs.dev/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Node.js](https://nodejs.org/)
-- [Express](https://expressjs.com/)
-- [MongoDB](https://www.mongodb.com/)
+## 📄 License
+
+This project is licensed under the <a href="LICENSE.md">MIT License</a>.
+
+<p align="center">
+  <a href="LICENSE.md">
+    <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License" />
+  </a>
+</p>
+
+---
+
+## 🙏 Acknowledgments
+
+- <img src="https://img.icons8.com/color/24/000000/react-native.png" width="20"/> [React](https://reactjs.org/)  
+- <img src="https://img.icons8.com/color/24/000000/vite.png" width="20"/> [Vite](https://vitejs.dev/)  
+- <img src="https://img.icons8.com/color/24/000000/tailwindcss.png" width="20"/> [Tailwind CSS](https://tailwindcss.com/)  
+- <img src="https://img.icons8.com/color/24/000000/nodejs.png" width="20"/> [Node.js](https://nodejs.org/)  
+- <img src="https://img.icons8.com/ios-filled/24/16A085/express-js.png" width="20"/> [Express](https://expressjs.com/)  
+- <img src="https://img.icons8.com/color/24/000000/mongodb.png" width="20"/> [MongoDB](https://www.mongodb.com/)
